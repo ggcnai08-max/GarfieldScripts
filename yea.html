@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GarfieldScripts (@GFScript)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-0:#0d0a1a;
+  --bg-card:#1a1328;
+  --pink-deep:#ff5c93;
+  --pink:#ff8fb6;
+  --pink-soft:#3d1f2e;
+  --mint:#8fe3c4;
+  --mint-deep:#4fc9a0;
+  --cream:#1a1228;
+  --choco:#7a4a3a;
+  --text-0:#f5e6ff;
+  --text-1:#b89dc8;
+  --text-2:#6b5080;
+  --radius:22px;
+  --radius-sm:14px;
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+
+body{
+  background:#0d0a1a;
+  color:var(--text-0);
+  font-family:'Nunito', sans-serif;
+  min-height:100vh;
+  position:relative;
+  overflow-x:hidden;
+}
+
+/* space canvas — sits behind everything */
+#spaceCanvas{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  z-index:0;
+  pointer-events:none;
+}
+
+/* floating candy — ลอยหน้า canvas */
+.candy{
+  position:fixed;
+  pointer-events:none;
+  z-index:2;
+  filter:drop-shadow(0 0 8px rgba(255,92,147,0.5));
+  animation:float 6s ease-in-out infinite;
+  opacity:0.85;
+}
+.candy.c1{top:6%; left:4%; font-size:34px; animation-delay:0s;}
+.candy.c2{top:14%; right:6%; font-size:28px; animation-delay:1.2s;}
+.candy.c3{bottom:18%; left:3%; font-size:30px; animation-delay:2.1s;}
+.candy.c4{bottom:8%; right:4%; font-size:26px; animation-delay:0.6s;}
+.candy.c5{top:45%; left:1%; font-size:22px; animation-delay:1.8s;}
+@keyframes float{
+  0%,100%{transform:translateY(0) rotate(0deg);}
+  50%{transform:translateY(-14px) rotate(8deg);}
+}
+@media (max-width:700px){ .candy{display:none;} }
+@media (prefers-reduced-motion: reduce){
+  .candy, #spaceCanvas{display:none;}
+  *{animation-duration:0.001ms !important;}
+}
+
+.wrap{
+  max-width:720px;
+  margin:0 auto;
+  padding:28px 20px 60px;
+  position:relative;
+  z-index:3;
+}
+
+/* ---------- top bar ---------- */
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:22px;
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  font-family:'Fredoka', sans-serif;
+  font-weight:600;
+  font-size:19px;
+  color:var(--pink);
+  text-shadow:0 0 12px rgba(255,143,182,0.5);
+}
+.brand .emoji{font-size:22px;}
+.status-pill{
+  font-size:12px;
+  font-weight:700;
+  color:#fff;
+  background:linear-gradient(135deg, var(--mint-deep), #3ab8ff);
+  padding:6px 13px;
+  border-radius:99px;
+  display:flex; align-items:center; gap:6px;
+  box-shadow:0 3px 14px rgba(79,201,160,0.4);
+}
+
+/* ---------- banner ---------- */
+.banner{
+  background:linear-gradient(135deg, rgba(255,92,147,0.12), rgba(255,92,147,0.05));
+  border:1.5px solid rgba(255,143,182,0.3);
+  border-radius:var(--radius);
+  padding:16px 18px;
+  margin-bottom:24px;
+  display:flex;
+  gap:14px;
+  align-items:flex-start;
+  backdrop-filter:blur(6px);
+}
+.banner .icon{font-size:24px; flex-shrink:0;}
+.banner-text{flex:1; min-width:0;}
+.banner-title{
+  font-family:'Fredoka', sans-serif;
+  font-weight:600;
+  font-size:15px;
+  color:var(--pink);
+  margin-bottom:4px;
+}
+.banner-body{
+  font-size:13px;
+  color:var(--text-1);
+  line-height:1.6;
+  font-weight:600;
+}
+.banner-links{display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;}
+.chip{
+  font-size:12px;
+  font-weight:700;
+  padding:7px 13px;
+  border-radius:99px;
+  border:none;
+  color:#fff;
+  text-decoration:none;
+  background:linear-gradient(135deg, var(--pink-deep), #c0397a);
+  transition:transform 0.15s, box-shadow 0.15s;
+  box-shadow:0 3px 10px rgba(255,92,147,0.4);
+  display:inline-flex; align-items:center; gap:5px;
+}
+.chip:hover{transform:translateY(-2px) scale(1.03); box-shadow:0 6px 18px rgba(255,92,147,0.55);}
+
+/* ---------- hero ---------- */
+.hero{
+  text-align:center;
+  margin-bottom:24px;
+}
+.mascot-wrap{
+  width:130px; height:130px;
+  margin:0 auto 10px;
+  display:flex; align-items:center; justify-content:center;
+}
+.mascot-wrap svg, .mascot-wrap img{
+  width:100%; height:100%;
+  object-fit:contain;
+  filter:drop-shadow(0 0 18px rgba(255,143,182,0.4));
+}
+.mascot-wrap img{border-radius:50%;}
+.hero h1{
+  font-family:'Fredoka', sans-serif;
+  font-size:clamp(26px,6vw,34px);
+  font-weight:700;
+  color:#fff;
+  line-height:1.25;
+  margin-bottom:8px;
+  text-shadow:0 0 20px rgba(255,143,182,0.4);
+}
+.hero h1 .accent{
+  color:var(--mint);
+  text-shadow:0 0 14px rgba(143,227,196,0.6);
+}
+.hero p{
+  color:var(--text-1);
+  font-size:14px;
+  font-weight:600;
+  max-width:480px;
+  margin:0 auto;
+  line-height:1.7;
+}
+
+/* ---------- steps ---------- */
+.steps{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-bottom:28px;
+}
+.step{
+  background:rgba(26,19,40,0.8);
+  backdrop-filter:blur(8px);
+  border-radius:var(--radius-sm);
+  padding:16px 14px;
+  text-align:center;
+  box-shadow:0 6px 20px rgba(0,0,0,0.4);
+  border:1.5px solid rgba(255,143,182,0.15);
+}
+.step .n{
+  width:30px; height:30px;
+  margin:0 auto 8px;
+  border-radius:50%;
+  background:linear-gradient(135deg, var(--pink), var(--pink-deep));
+  color:#fff;
+  font-family:'Fredoka', sans-serif;
+  font-weight:600;
+  font-size:14px;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 0 10px rgba(255,92,147,0.4);
+}
+.step .t{
+  font-size:12.5px;
+  color:var(--text-0);
+  font-weight:700;
+  line-height:1.5;
+}
+@media (max-width:560px){ .steps{grid-template-columns:1fr;} }
+
+/* ---------- code zone ---------- */
+.section-label{
+  font-family:'Fredoka', sans-serif;
+  font-size:14px;
+  font-weight:600;
+  color:var(--pink);
+  margin-bottom:8px;
+  display:flex; align-items:center; gap:8px;
+}
+.section-label .em{font-size:16px;}
+
+.codebox{
+  background:rgba(26,19,40,0.85);
+  backdrop-filter:blur(10px);
+  border:1.5px solid rgba(255,143,182,0.2);
+  border-radius:var(--radius);
+  overflow:hidden;
+  margin-bottom:30px;
+  box-shadow:0 10px 32px rgba(0,0,0,0.5);
+}
+.codebox-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:12px 16px;
+  background:rgba(255,92,147,0.08);
+  border-bottom:1.5px solid rgba(255,143,182,0.15);
+}
+.codebox-head .fname{
+  font-size:13px;
+  font-weight:700;
+  color:var(--text-1);
+  display:flex; align-items:center; gap:8px;
+}
+
+.copy-btn{
+  font-family:'Fredoka', sans-serif;
+  font-size:13px;
+  font-weight:600;
+  color:#fff;
+  background:linear-gradient(135deg, var(--mint-deep), #3ab8ff);
+  border:none;
+  padding:9px 18px;
+  border-radius:99px;
+  cursor:pointer;
+  display:flex; align-items:center; gap:6px;
+  transition:transform 0.15s, box-shadow 0.15s;
+  box-shadow:0 4px 14px rgba(79,201,160,0.4);
+}
+.copy-btn:hover{transform:translateY(-2px) scale(1.04); box-shadow:0 8px 22px rgba(79,201,160,0.55);}
+.copy-btn:active{transform:scale(0.98);}
+.copy-btn.copied{background:linear-gradient(135deg, var(--pink-deep), var(--pink));}
+
+.codebox pre{
+  margin:0;
+  padding:18px;
+  font-family:'Consolas','Monaco',monospace;
+  font-size:12.5px;
+  line-height:1.7;
+  color:#e8c4d8;
+  overflow-x:auto;
+  white-space:pre;
+  background:rgba(10,6,22,0.6);
+}
+
+/* ---------- note ---------- */
+.note{
+  font-size:12px;
+  font-weight:700;
+  color:var(--text-2);
+  background:rgba(26,19,40,0.6);
+  backdrop-filter:blur(6px);
+  border:1.5px dashed rgba(255,143,182,0.2);
+  border-radius:var(--radius-sm);
+  padding:12px 16px;
+  line-height:1.7;
+  margin-bottom:30px;
+}
+.note b{color:var(--text-1);}
+
+/* ---------- footer ---------- */
+footer{
+  border-top:1.5px dashed rgba(255,143,182,0.2);
+  padding-top:20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:12px;
+}
+footer .left{font-size:12px; color:var(--text-2); font-weight:700;}
+footer .socials{display:flex; gap:10px;}
+footer .socials a{
+  color:var(--pink);
+  text-decoration:none;
+  font-size:12px;
+  font-weight:700;
+  padding:6px 12px;
+  border:1.5px solid rgba(255,143,182,0.25);
+  border-radius:99px;
+  transition:background 0.15s, border-color 0.15s;
+}
+footer .socials a:hover{background:rgba(255,92,147,0.15); border-color:var(--pink);}
+</style>
+</head>
+<body>
+
+<!-- ===== SPACE CANVAS ===== -->
+<canvas id="spaceCanvas"></canvas>
+
+<!-- ลูกกวาดลอยตกแต่ง -->
+<div class="candy c1">🍭</div>
+<div class="candy c2">🍬</div>
+<div class="candy c3">🧁</div>
+<div class="candy c4">🍡</div>
+<div class="candy c5">🍩</div>
+
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="brand"><span class="emoji">🐱‍👤</span><span id="siteName">GarfieldScripts</span></div>
+    <div class="status-pill">✨ <span id="statusText">UPDATED TODAY</span></div>
+  </div>
+
+  <div class="banner">
+    <div class="icon">📣</div>
+    <div class="banner-text">
+      <div class="banner-title" id="bannerTitle"></div>
+      <div class="banner-body" id="bannerBody"></div>
+      <div class="banner-links" id="bannerLinks"></div>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="mascot-wrap" id="mascotWrap"></div>
+    <h1 id="heroTitle"></h1>
+    <p id="heroDesc"></p>
+  </div>
+
+  <div class="steps" id="stepsWrap"></div>
+
+  <div class="section-label"><span class="em">🍯</span> Script</div>
+  <div class="codebox">
+    <div class="codebox-head">
+      <div class="fname">📄 <span id="fileName">script.lua</span></div>
+      <button class="copy-btn" id="copyBtn">📋 Copy</button>
+    </div>
+    <pre id="codeContent"></pre>
+  </div>
+
+  <div class="note" id="noteBox"></div>
+
+  <footer>
+    <div class="left" id="footerLeft"></div>
+    <div class="socials" id="footerSocials"></div>
+  </footer>
+
+</div>
+
+<script>
+/* ====================================================================
+   CONFIG — แก้ตรงนี้ที่เดียว
+   ==================================================================== */
+
+/* เพิ่มเกมใหม่ได้ตรงนี้เลย */
+const GAMES = {
+  "booga-booga": {
+    name: "Booga Booga",
+    scriptUrl: "https://your-raw-script-link-booga-here"
+  },
+  "blox-fruits": {
+    name: "Blox Fruits",
+    scriptUrl: "https://your-raw-script-link-bloxfruits-here"
+  },
+  /* เพิ่มเกมใหม่แบบนี้:
+  "ชื่อ-เกม": {
+    name: "ชื่อแสดงผล",
+    scriptUrl: "https://link-script-เกมนั้น"
+  },
+  */
+};
+
+/* อ่านค่า ?game= จาก URL อัตโนมัติ */
+const urlGame = new URLSearchParams(window.location.search).get("game");
+const selectedGame = GAMES[urlGame] || Object.values(GAMES)[0]; /* ถ้าไม่มี ?game= จะเอาเกมแรก */
+const scriptUrl = selectedGame.scriptUrl;
+
+const CONFIG = {
+  siteName: "GarfieldScripts",
+  statusText: "UPDATED 6/22/2026",
+  mascotImageUrl: "",
+
+  banner: {
+    title: "อย่าลืมกดติดตามช่องเราด้วยนะ 💗",
+    body: "จะได้ไม่พลาด หาก script ใช้ไม่ได้ ลองไปดูคลิปสอนใช้งานในช่องได้เลย",
+    links: [
+      { label: "▶ YouTube", url: "https://www.youtube.com/@GARScript" },
+      { label: "💬 Discord", url: "https://discord.gg/v4PFdQZw6d" },
+      // TikTok ยังไม่มีลิงก์จริง ใช้ YouTube ติดไว้ก่อน
+      { label: "🎵 TikTok", url: "https://www.youtube.com/@GARScript" }
+    ]
+  },
+
+  hero: {
+    title: `GET <span class="accent">${selectedGame.name}</span> SCRIPT ✨`,
+    desc: "Latest update script for your selected game. Compatible with most major executors (including Synapse X, Script-Ware, Krnl, and others)."
+  },
+
+  steps: [
+    { n: "1", t: 'Click the "📋Copy" button below to copy the script.' },
+    { n: "2", t: "Open your choice of Executor." },
+    { n: "3", t: "Paste the script and click Execute." }
+  ],
+
+  fileName: "script.lua",
+
+  code: `loadstring(game:HttpGet("${scriptUrl}"))()`,
+
+  note: "<b>หมายเหตุ:</b> ใช้งานตามดุลยพินิจของผู้ใช้เอง โปรดอ่านกฎของเกม/แพลตฟอร์มก่อนใช้ script ใดๆ ทางเราไม่รับผิดชอบความเสียหายที่เกิดจากการใช้งานผิดวิธี",
+
+  footer: {
+    left: "© 2026 GarfieldScripts · made with 🐻 for our community",
+    socials: [
+      { label: "YouTube", url: "https://www.youtube.com/@GARScript" },
+      { label: "Discord", url: "https://discord.gg/v4PFdQZw6d" }
+    ]
+  }
+};
+
+/* ====================================================================
+   SPACE DUST ANIMATION
+   ==================================================================== */
+(function(){
+  const canvas = document.getElementById('spaceCanvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles, nebula;
+
+  function resize(){
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  /* สร้าง nebula gradient blobs */
+  function buildNebula(){
+    nebula = [
+      { x: W*0.15, y: H*0.20, r: W*0.30, col: 'rgba(180,60,120,0.055)' },
+      { x: W*0.80, y: H*0.15, r: W*0.28, col: 'rgba(60,140,200,0.05)'  },
+      { x: W*0.50, y: H*0.70, r: W*0.35, col: 'rgba(120,60,200,0.045)' },
+      { x: W*0.10, y: H*0.75, r: W*0.22, col: 'rgba(255,100,150,0.04)' },
+    ];
+  }
+
+  /* สร้าง particle */
+  function buildParticles(){
+    const COUNT = Math.min(280, Math.floor(W * H / 5500));
+    particles = Array.from({ length: COUNT }, () => makeParticle(true));
+  }
+
+  function makeParticle(randomY){
+    const types = ['dust','star','glow'];
+    const type  = types[Math.floor(Math.random()*3)];
+    return {
+      type,
+      x:  Math.random() * (W||window.innerWidth),
+      y:  randomY ? Math.random() * (H||window.innerHeight) : -4,
+      r:  type === 'glow' ? Math.random()*2.2+1.2
+        : type === 'star' ? Math.random()*1.4+0.4
+        : Math.random()*1.0+0.2,
+      vx: (Math.random()-0.5) * (type==='dust' ? 0.25 : 0.10),
+      vy: Math.random() * (type==='dust' ? 0.35 : 0.18) + 0.06,
+      opacity: Math.random()*0.6 + (type==='glow' ? 0.35 : 0.15),
+      twinkle: type === 'star' ? Math.random()*Math.PI*2 : null,
+      twinkleSpeed: Math.random()*0.03+0.01,
+      col: type === 'glow'
+        ? (Math.random()<0.5 ? `rgba(255,143,182,` : `rgba(143,227,196,`)
+        : type === 'star'
+        ? (Math.random()<0.4 ? `rgba(255,220,240,` : `rgba(200,220,255,`)
+        : `rgba(${180+Math.floor(Math.random()*40)},${140+Math.floor(Math.random()*40)},${200+Math.floor(Math.random()*40)},`
+    };
+  }
+
+  function drawNebula(){
+    nebula.forEach(n=>{
+      const g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.r);
+      g.addColorStop(0, n.col);
+      g.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r, 0, Math.PI*2);
+      ctx.fill();
+    });
+  }
+
+  let frame = 0;
+  function animate(){
+    requestAnimationFrame(animate);
+    ctx.clearRect(0, 0, W, H);
+
+    /* วาดพื้นหลังอวกาศ */
+    const bg = ctx.createLinearGradient(0, 0, W*0.3, H);
+    bg.addColorStop(0, '#0d0818');
+    bg.addColorStop(0.5, '#09060f');
+    bg.addColorStop(1, '#0d0818');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    drawNebula();
+    frame++;
+
+    particles.forEach((p, i)=>{
+      p.x += p.vx;
+      p.y += p.vy;
+
+      /* twinkle ดาว */
+      let alpha = p.opacity;
+      if(p.twinkle !== null){
+        p.twinkle += p.twinkleSpeed;
+        alpha = p.opacity * (0.55 + 0.45 * Math.sin(p.twinkle));
+      }
+
+      ctx.beginPath();
+      if(p.type === 'glow'){
+        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r*3.5);
+        g.addColorStop(0, p.col + alpha + ')');
+        g.addColorStop(1, p.col + '0)');
+        ctx.fillStyle = g;
+        ctx.arc(p.x, p.y, p.r*3.5, 0, Math.PI*2);
+      } else {
+        ctx.fillStyle = p.col + alpha + ')';
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      }
+      ctx.fill();
+
+      /* รีเซ็ตถ้าออกนอกจอ */
+      if(p.y > H+6 || p.x < -6 || p.x > W+6){
+        particles[i] = makeParticle(false);
+        particles[i].y = -4;
+        particles[i].x = Math.random() * W;
+      }
+    });
+  }
+
+  resize();
+  buildNebula();
+  buildParticles();
+  animate();
+  window.addEventListener('resize', ()=>{ resize(); buildNebula(); buildParticles(); });
+})();
+
+/* ====================================================================
+   BEAR SVG
+   ==================================================================== */
+const BEAR_SVG = `
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="100" cy="175" rx="55" ry="10" fill="rgba(255,92,147,0.2)"/>
+  <circle cx="55" cy="55" r="26" fill="#c98a5e"/>
+  <circle cx="145" cy="55" r="26" fill="#c98a5e"/>
+  <circle cx="55" cy="55" r="13" fill="#ffb3c9"/>
+  <circle cx="145" cy="55" r="13" fill="#ffb3c9"/>
+  <circle cx="100" cy="105" r="70" fill="#dba370"/>
+  <ellipse cx="100" cy="125" rx="38" ry="32" fill="#f3d9b8"/>
+  <circle cx="75" cy="92" r="8" fill="#2a1425"/>
+  <circle cx="125" cy="92" r="8" fill="#2a1425"/>
+  <circle cx="77" cy="89" r="2.4" fill="#fff"/>
+  <circle cx="127" cy="89" r="2.4" fill="#fff"/>
+  <ellipse cx="100" cy="112" rx="11" ry="8" fill="#7a4a3a"/>
+  <path d="M85 128 Q100 140 115 128" stroke="#7a4a3a" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <circle cx="60" cy="118" r="9" fill="#ffb3c9" opacity="0.8"/>
+  <circle cx="140" cy="118" r="9" fill="#ffb3c9" opacity="0.8"/>
+</svg>`;
+
+/* ====================================================================
+   RENDER
+   ==================================================================== */
+document.getElementById('siteName').textContent  = CONFIG.siteName;
+document.getElementById('statusText').textContent = CONFIG.statusText;
+
+const mw = document.getElementById('mascotWrap');
+mw.innerHTML = (CONFIG.mascotImageUrl && CONFIG.mascotImageUrl.trim())
+  ? `<img src="${CONFIG.mascotImageUrl}" alt="mascot">` : BEAR_SVG;
+
+document.getElementById('bannerTitle').textContent = CONFIG.banner.title;
+document.getElementById('bannerBody').textContent  = CONFIG.banner.body;
+document.getElementById('bannerLinks').innerHTML   = CONFIG.banner.links
+  .map(l=>`<a class="chip" href="${l.url}" target="_blank" rel="noopener">${l.label}</a>`).join('');
+
+document.getElementById('heroTitle').innerHTML  = CONFIG.hero.title;
+document.getElementById('heroDesc').textContent = CONFIG.hero.desc;
+
+document.getElementById('stepsWrap').innerHTML = CONFIG.steps
+  .map(s=>`<div class="step"><div class="n">${s.n}</div><div class="t">${s.t}</div></div>`).join('');
+
+document.getElementById('fileName').textContent    = CONFIG.fileName;
+document.getElementById('codeContent').textContent = CONFIG.code;
+document.getElementById('noteBox').innerHTML        = CONFIG.note;
+document.getElementById('footerLeft').textContent  = CONFIG.footer.left;
+document.getElementById('footerSocials').innerHTML = CONFIG.footer.socials
+  .map(s=>`<a href="${s.url}" target="_blank" rel="noopener">${s.label}</a>`).join('');
+
+const copyBtn = document.getElementById('copyBtn');
+copyBtn.addEventListener('click', async ()=>{
+  try{ await navigator.clipboard.writeText(CONFIG.code); }
+  catch(e){
+    const ta = document.createElement('textarea');
+    ta.value = CONFIG.code; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+  }
+  copyBtn.classList.add('copied');
+  copyBtn.textContent = '✓ Copied!';
+  setTimeout(()=>{ copyBtn.classList.remove('copied'); copyBtn.innerHTML='📋 Copy'; }, 1600);
+});
+</script>
+</body>
+</html>
